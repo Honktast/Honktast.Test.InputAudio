@@ -54,8 +54,13 @@ public class PitchDetector
 
             if (frequency.HasValue)
             {
+                // DEBUG: Zeige erkannte Frequenz vor Stabilisierung
+                Console.Error.WriteLine($"[DEBUG] Raw YIN: {frequency:F2} Hz");
+
                 // Stabilisierung mit History
                 frequency = StabilizeFrequency(frequency.Value);
+
+                Console.Error.WriteLine($"[DEBUG] After stabilization: {frequency:F2} Hz");
             }
 
             return frequency;
