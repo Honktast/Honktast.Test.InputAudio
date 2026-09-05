@@ -7,7 +7,7 @@ public class PitchDetector
     private float? _lastFrequency;
     private readonly Queue<float> _frequencyHistory;
     private readonly int _historySize = 8;
-    private const float ThresholdYin = 0.15f;
+    private const float ThresholdYin = 0.25f;
 
     public PitchDetector(int sampleRate = 44100, int bufferSize = 2048)
     {
@@ -100,10 +100,10 @@ public class PitchDetector
             df[lag] = sum;
             cumulativeSum += sum;
 
-            // Normalisierte Differenzfunktion
+            // Normalisierte Differenzfunktion (YIN normalization)
             if (cumulativeSum > 0)
             {
-                df[lag] = df[lag] / (cumulativeSum / (lag + 1));
+                df[lag] = df[lag] * lag / cumulativeSum;
             }
         }
 
