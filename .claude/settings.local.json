@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Force \"C:\\\\Users\\\\Paul\\\\source\\\\repos\\\\Honktast.Test.InputAudio\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 50)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet build *)",
+      "Bash(git add *)"
+    ]
+  }
+}

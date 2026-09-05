@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Honktast.Test.InputAudio", "Honktast.Test.InputAudio\Honktast.Test.InputAudio.csproj", "{7D137967-5076-4600-BB99-47DAEEB44701}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D137967-5076-4600-BB99-47DAEEB44701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D137967-5076-4600-BB99-47DAEEB44701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D137967-5076-4600-BB99-47DAEEB44701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D137967-5076-4600-BB99-47DAEEB44701}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C411DA7-9146-4E3E-9CD3-7DA2E8C6BF39}
+	EndGlobalSection
+EndGlobal

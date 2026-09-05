@@ -1,0 +1,39 @@
+## Ignoriere Build-Verzeichnisse
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+
+## Ignoriere Dependency-Caches
+.nuget/
+packages/
+*.nupkg
+*.snupkg
+
+## Ignoriere IDE-Dateien
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+## Ignoriere Test-Ergebnisse
+TestResults/
+*.trx
+
+## Ignoriere temporäre Dateien
+*.tmp
+*.temp
+*.log
+
+## Ignoriere Produktionsdaten
+*.wav
+*.mp3
+*.config.local
+
+## Ignoriere Umgebungsvariablen
+.env
+.env.local
+appsettings.local.json

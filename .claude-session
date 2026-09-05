@@ -1,0 +1,24 @@
+SESSION_ID=https://claude.ai/code/session_013UYVKagBLCB5aBh7Hot5PH
+PROJECT_NAME=Honktast.Test.InputAudio
+DESCRIPTION=Musik-Noten Erkenner - Mikrofon-Input zu Noten Konverter
+CREATED_DATE=2026-09-05
+LAST_UPDATED=2026-09-05
+
+DEVELOPMENT_STATUS=
+- Grundgerüst: ✓ Vollständig
+- Pitch Detection (YIN-Algorithmus): ✓ Implementiert
+- Note Konvertierung: ✓ Vollständig
+- Mikrofon-Auswahl: ✓ Implementiert
+- Benutzerinterface: ✓ Menü-System
+- Testing: ⧗ In Bearbeitung
+
+NEXT_STEPS=
+1. Weitere Testing mit verschiedenen Noten
+2. Optional: Harmonische-Filterung verfeinern
+3. Optional: Visuelle Spektrogramm-Anzeige
+4. Optional: Aufnahme und Playback
+
+NOTES=
+Die aktuelle Version verwendet den YIN-Algorithmus für robuste Pitch-Detektion.
+Frequenzbereich: 40-500 Hz (optimiert für menschliche Stimme)
+Wichtig: Bei Harmonischen kann die Erkennung immer noch variabel sein.
