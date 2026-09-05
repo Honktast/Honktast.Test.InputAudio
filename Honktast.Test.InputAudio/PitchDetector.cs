@@ -20,8 +20,9 @@ public class PitchDetector
         _frequencyHistory = new Queue<float>(_historySize);
     }
 
-    public void AddSamples(float[] samples)
+    public bool AddSamples(float[] samples)
     {
+        bool bufferFilled = false;
         foreach (var sample in samples)
         {
             _buffer[_bufferIndex] = sample;
@@ -30,8 +31,10 @@ public class PitchDetector
             if (_bufferIndex >= _bufferSize)
             {
                 _bufferIndex = 0;
+                bufferFilled = true;
             }
         }
+        return bufferFilled;
     }
 
     public float? DetectPitch()

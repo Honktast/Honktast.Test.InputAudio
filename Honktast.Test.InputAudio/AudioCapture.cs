@@ -38,30 +38,29 @@ public class AudioCapture : IDisposable
         Console.WriteLine("Note\tFrequenz\tCents\tSignal");
         Console.WriteLine(new string('-', 50));
 
-        int updateCounter = 0;
-
         while (_isRunning)
         {
             await Task.Delay(50);
-            updateCounter++;
 
-            if (updateCounter >= 2)
+            float[] samples;
+            lock (_bufferLock)
             {
-                updateCounter = 0;
+                samples = _audioBuffer.ToArray();
+            }
 
-                float[] samples;
-                lock (_bufferLock)
+            if (samples.Length > 0)
+            {
+                bool bufferFilled = false;
+                foreach (var sample in samples)
                 {
-                    samples = _audioBuffer.ToArray();
+                    if (_pitchDetector.AddSamples(new[] { sample }))
+                    {
+                        bufferFilled = true;
+                    }
                 }
 
-                if (samples.Length > 0)
+                if (bufferFilled)
                 {
-                    foreach (var sample in samples)
-                    {
-                        _pitchDetector.AddSamples(new[] { sample });
-                    }
-
                     var pitch = _pitchDetector.DetectPitch();
 
                     if (pitch.HasValue && pitch > 0)
@@ -72,11 +71,11 @@ public class AudioCapture : IDisposable
                         string signal = GetSignalBar(samples);
                         Console.WriteLine($"{note}\t{pitch:F1} Hz\t{cents:+0.00;-0.00}¢\t{signal}");
                     }
+                }
 
-                    lock (_bufferLock)
-                    {
-                        _audioBuffer.Clear();
-                    }
+                lock (_bufferLock)
+                {
+                    _audioBuffer.Clear();
                 }
             }
 
