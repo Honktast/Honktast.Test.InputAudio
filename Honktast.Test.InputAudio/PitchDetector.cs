@@ -157,10 +157,13 @@ public class PitchDetector
             float diff = Math.Abs(frequency - _lastFrequency.Value);
             float percentDiff = diff / _lastFrequency.Value * 100;
 
-            // Wenn die Differenz zu groß ist, ignoriere es
-            if (percentDiff > 20)
+            // Wenn die Differenz zu groß ist, starte neu mit neuer Frequenz
+            if (percentDiff > 25)
             {
-                return _lastFrequency;
+                _frequencyHistory.Clear();
+                _frequencyHistory.Enqueue(frequency);
+                _lastFrequency = frequency;
+                return frequency;
             }
         }
 
