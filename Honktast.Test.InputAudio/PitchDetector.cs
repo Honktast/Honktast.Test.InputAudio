@@ -7,7 +7,7 @@ public class PitchDetector
     private float? _lastFrequency;
     private readonly Queue<float> _frequencyHistory;
     private readonly int _historySize = 8;
-    private const float ThresholdYin = 0.1f;
+    private const float ThresholdYin = 0.15f;
 
     public PitchDetector(int sampleRate = 44100, int bufferSize = 2048)
     {

@@ -58,6 +58,8 @@ public class AudioCapture : IDisposable
                     }
                 }
 
+                string signal = GetSignalBar(samples);
+
                 if (detectionReady)
                 {
                     var pitch = _pitchDetector.DetectPitch();
@@ -66,9 +68,11 @@ public class AudioCapture : IDisposable
                     {
                         string note = NoteConverter.FrequencyToNote(pitch.Value);
                         float cents = NoteConverter.GetCentsDifference(pitch.Value, note);
-
-                        string signal = GetSignalBar(samples);
                         Console.WriteLine($"{note}\t{pitch:F1} Hz\t{cents:+0.00;-0.00}¢\t{signal}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"--- \t--- Hz\t--- ¢\t{signal}\t(kein Signal erkannt)");
                     }
                 }
             }
@@ -106,7 +110,8 @@ public class AudioCapture : IDisposable
             {
                 short sample = BitConverter.ToInt16(e.Buffer, i);
                 float normalized = sample / 32768f;
-                _audioBuffer.Enqueue(normalized);
+                float amplified = normalized * 4f;
+                _audioBuffer.Enqueue(amplified);
                 _sampleCount++;
             }
         }
