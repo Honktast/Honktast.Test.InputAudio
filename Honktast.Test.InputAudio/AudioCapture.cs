@@ -4,7 +4,6 @@ public class AudioCapture : IDisposable
 {
     private readonly IWaveIn _waveIn;
     private readonly PitchDetector _pitchDetector;
-    private byte[] _recordedBytes;
     private bool _isRunning;
     private readonly int _deviceIndex;
     private readonly Queue<float> _audioBuffer;
@@ -21,7 +20,6 @@ public class AudioCapture : IDisposable
         };
 
         _pitchDetector = new PitchDetector(44100, 2048);
-        _recordedBytes = new byte[0];
         _isRunning = false;
         _audioBuffer = new Queue<float>();
         _sampleCount = 0;
@@ -46,20 +44,21 @@ public class AudioCapture : IDisposable
             lock (_bufferLock)
             {
                 samples = _audioBuffer.ToArray();
+                _audioBuffer.Clear();
             }
 
             if (samples.Length > 0)
             {
-                bool bufferFilled = false;
-                foreach (var sample in samples)
+                bool detectionReady = false;
+                for (int i = 0; i < samples.Length; i++)
                 {
-                    if (_pitchDetector.AddSamples(new[] { sample }))
+                    if (_pitchDetector.AddSamples(new[] { samples[i] }))
                     {
-                        bufferFilled = true;
+                        detectionReady = true;
                     }
                 }
 
-                if (bufferFilled)
+                if (detectionReady)
                 {
                     var pitch = _pitchDetector.DetectPitch();
 
@@ -71,11 +70,6 @@ public class AudioCapture : IDisposable
                         string signal = GetSignalBar(samples);
                         Console.WriteLine($"{note}\t{pitch:F1} Hz\t{cents:+0.00;-0.00}¢\t{signal}");
                     }
-                }
-
-                lock (_bufferLock)
-                {
-                    _audioBuffer.Clear();
                 }
             }
 

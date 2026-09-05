@@ -3,49 +3,50 @@ public class PitchDetector
     private readonly int _bufferSize;
     private readonly int _sampleRate;
     private readonly float[] _window;
-    private float[] _buffer;
-    private int _bufferIndex;
+    private readonly Queue<float> _sampleQueue;
     private float? _lastFrequency;
     private readonly Queue<float> _frequencyHistory;
     private readonly int _historySize = 8;
     private const float ThresholdYin = 0.1f;
 
-    public PitchDetector(int sampleRate = 44100, int bufferSize = 4096)
+    public PitchDetector(int sampleRate = 44100, int bufferSize = 2048)
     {
         _sampleRate = sampleRate;
         _bufferSize = bufferSize;
-        _buffer = new float[bufferSize];
-        _bufferIndex = 0;
+        _sampleQueue = new Queue<float>(bufferSize);
         _window = HannWindow(bufferSize);
         _frequencyHistory = new Queue<float>(_historySize);
     }
 
     public bool AddSamples(float[] samples)
     {
-        bool bufferFilled = false;
         foreach (var sample in samples)
         {
-            _buffer[_bufferIndex] = sample;
-            _bufferIndex++;
-
-            if (_bufferIndex >= _bufferSize)
+            _sampleQueue.Enqueue(sample);
+            if (_sampleQueue.Count > _bufferSize)
             {
-                _bufferIndex = 0;
-                bufferFilled = true;
+                _sampleQueue.Dequeue();
             }
         }
-        return bufferFilled;
+
+        bool isFull = _sampleQueue.Count == _bufferSize;
+        return isFull;
     }
 
     public float? DetectPitch()
     {
         try
         {
+            if (_sampleQueue.Count < _bufferSize)
+                return null;
+
+            float[] buffer = _sampleQueue.ToArray();
+
             // Anwenden des Fensters
             float[] windowed = new float[_bufferSize];
             for (int i = 0; i < _bufferSize; i++)
             {
-                windowed[i] = _buffer[i] * _window[i];
+                windowed[i] = buffer[i] * _window[i];
             }
 
             // YIN-Algorithmus für Tonhöhenerkennung
@@ -59,8 +60,9 @@ public class PitchDetector
 
             return frequency;
         }
-        catch
+        catch (Exception ex)
         {
+            Console.Error.WriteLine($"Pitch detection error: {ex.Message}");
             return null;
         }
     }
