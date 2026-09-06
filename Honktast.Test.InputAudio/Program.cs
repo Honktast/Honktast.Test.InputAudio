@@ -111,10 +111,8 @@ async Task RunLoopback()
     if (!AudioDeviceManager.TestDevice(inputDeviceIndex))
         return;
 
-    int outputDeviceIndex = AudioDeviceManager.SelectOutputDevice();
-
-    if (outputDeviceIndex < 0)
-        return;
+    AudioDeviceManager.SelectOutputDevice();
+    const int outputDeviceIndex = -1;
 
     Console.WriteLine("\n🔄 Loopback-Modus wird gestartet...\n");
 
@@ -150,10 +148,8 @@ async Task RunLoopbackWithRecording()
     if (!AudioDeviceManager.TestDevice(inputDeviceIndex))
         return;
 
-    int outputDeviceIndex = AudioDeviceManager.SelectOutputDevice();
-
-    if (outputDeviceIndex < 0)
-        return;
+    AudioDeviceManager.SelectOutputDevice();
+    const int outputDeviceIndex = -1;
 
     Console.WriteLine("\n🎧 Loopback + Noten-Erkennung wird gestartet...\n");
 
