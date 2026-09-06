@@ -9,7 +9,7 @@ public class PitchDetector
     private readonly int _historySize = 8;
     private const float ThresholdYin = 0.35f;
 
-    public PitchDetector(int sampleRate = 44100, int bufferSize = 2048)
+    public PitchDetector(int sampleRate = 44100, int bufferSize = 1024)
     {
         _sampleRate = sampleRate;
         _bufferSize = bufferSize;

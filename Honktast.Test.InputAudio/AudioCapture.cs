@@ -17,10 +17,11 @@ public class AudioCapture : IDisposable
         _waveIn = new WaveInEvent
         {
             DeviceNumber = deviceIndex,
-            WaveFormat = new WaveFormat(44100, 16, 1)
+            WaveFormat = new WaveFormat(44100, 16, 1),
+            BufferMilliseconds = 10
         };
 
-        _pitchDetector = new PitchDetector(44100, 2048);
+        _pitchDetector = new PitchDetector(44100, 1024);
         _isRunning = false;
         _audioBuffer = new Queue<float>();
         _sampleCount = 0;
