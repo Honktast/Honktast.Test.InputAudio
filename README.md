@@ -6,6 +6,17 @@ Eine C# .NET 8.0 Konsolenanwendung, die Mikrofoneingaben analysiert und in Echtz
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)]()
 
+---
+
+### 🤖 Claude Development Session
+**Letzte Sitzung:** https://claude.ai/code/session_01J269EB9hrYSkyMRLCBRKYo  
+**Status:** Alle 44 Tasten des Casio SA-76 funktionieren korrekt ✅  
+**Hardware:** Casio SA-76 Keyboard (C3-G6, 3.5 Oktaven)
+
+Siehe `.claude/project.json` für Projektdetails und Quick-Commands.
+
+---
+
 ## 📋 Inhaltsverzeichnis
 
 - [Features](#features)

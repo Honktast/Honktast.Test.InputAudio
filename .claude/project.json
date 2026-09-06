@@ -1,0 +1,38 @@
+{
+  "name": "Honktast.Test.InputAudio",
+  "description": "🎵 Echtzeit Musik-Noten Erkenner mit YIN-Algorithmus für Casio SA-76 Keyboard",
+  "version": "1.0.0",
+  "language": "C#",
+  "framework": ".NET 8.0",
+  "lastSession": "https://claude.ai/code/session_01J269EB9hrYSkyMRLCBRKYo",
+  "quickCommands": {
+    "build": "dotnet build",
+    "run": "dotnet run",
+    "test": "dotnet test",
+    "restore": "dotnet restore"
+  },
+  "shortcuts": {
+    "start_app": "cd Honktast.Test.InputAudio && dotnet run"
+  },
+  "hardware": {
+    "keyboard": "Casio SA-76",
+    "keys": 44,
+    "range": "C3 (261.63 Hz) - G6 (1567.98 Hz)",
+    "octaves": 3.5
+  },
+  "features": {
+    "pitch_detection": "YIN Algorithm",
+    "sample_rate": "44100 Hz",
+    "buffer_size": "2048 samples",
+    "frequency_range": "40 - 2000 Hz",
+    "yin_threshold": 0.35,
+    "stabilization": "Queue-based frequency smoothing"
+  },
+  "notes": [
+    "YIN threshold 0.35 für Grundton-Erkennung (verhindert Oktaven-Verwechslung)",
+    "Signal wird 4x verstärkt für schwache Eingaben",
+    "Stabilisierung setzt bei >25% Frequenz-Unterschied neu",
+    "Alle 44 Tasten des Casio SA-76 werden erkannt"
+  ],
+  "lastUpdated": "2026-09-06"
+}
