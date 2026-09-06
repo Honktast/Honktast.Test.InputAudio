@@ -15,7 +15,8 @@ public class SessionRecorder : IDisposable
         string sessionId = Guid.NewGuid().ToString().Substring(0, 8);
         string fileName = _sessionStart.ToString("dd.MM.yyyy-HH-mm-ss") + $"-{sessionId}.txt";
 
-        string recordingsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "recordings");
+        string musicDir = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+        string recordingsDir = Path.Combine(musicDir, "Eigene Musik", "Sessions");
         if (!Directory.Exists(recordingsDir))
         {
             Directory.CreateDirectory(recordingsDir);
@@ -33,6 +34,7 @@ public class SessionRecorder : IDisposable
         _writer.WriteLine("║       KEYBOARD SESSION RECORDING        ║");
         _writer.WriteLine("╚════════════════════════════════════════╝");
         _writer.WriteLine($"Sitzung gestartet: {_sessionStart:dd.MM.yyyy HH:mm:ss}");
+        _writer.WriteLine($"Speichert in: {Path.GetDirectoryName(_filePath)}");
         _writer.WriteLine(new string('─', 50));
         _writer.WriteLine("Zeit\t\tNote\t\tDauer (ms)\tFrequenz");
         _writer.WriteLine(new string('─', 50));
