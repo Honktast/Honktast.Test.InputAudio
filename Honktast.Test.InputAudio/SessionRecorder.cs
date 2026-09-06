@@ -13,7 +13,7 @@ public class SessionRecorder : IDisposable
     {
         _sessionStart = DateTime.Now;
         string sessionId = Guid.NewGuid().ToString().Substring(0, 8);
-        string fileName = _sessionStart.ToString("dd.MM.yyyy-HH:mm:ss") + $"-{sessionId}.txt";
+        string fileName = _sessionStart.ToString("dd.MM.yyyy-HH-mm-ss") + $"-{sessionId}.txt";
 
         string recordingsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "recordings");
         if (!Directory.Exists(recordingsDir))
