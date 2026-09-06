@@ -20,12 +20,12 @@ public class AudioLoopback : IDisposable
         {
             DeviceNumber = inputDeviceIndex,
             WaveFormat = _waveFormat,
-            BufferMilliseconds = 10
+            BufferMilliseconds = 20
         };
 
         _waveProvider = new BufferedWaveProvider(_waveFormat)
         {
-            BufferDuration = TimeSpan.FromMilliseconds(20)
+            BufferDuration = TimeSpan.FromMilliseconds(200)
         };
 
         try
@@ -63,7 +63,7 @@ public class AudioLoopback : IDisposable
             _waveOut?.Play();
 
         _waveIn.StartRecording();
-        Console.WriteLine("🔄 Loopback aktiv - Mikrofon wird auf Kopfhörer durchgeschleift (Minimum Latenz)");
+        Console.WriteLine("🔄 Loopback aktiv - Mikrofon wird auf Kopfhörer durchgeschleift (Low Latency)");
     }
 
     public void Stop()
@@ -82,7 +82,21 @@ public class AudioLoopback : IDisposable
     private void OnDataAvailable(object? sender, WaveInEventArgs e)
     {
         if (!_isRunning || _waveProvider == null) return;
-        _waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+
+        try
+        {
+            _waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+        }
+        catch (InvalidOperationException)
+        {
+            // Buffer voll - verwerfe älteste Daten statt zu crashen
+            if (_waveProvider.BufferedBytes > 0)
+            {
+                byte[] temp = new byte[e.BytesRecorded];
+                _waveProvider.Read(temp, 0, Math.Min(temp.Length, _waveProvider.BufferedBytes));
+                _waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+            }
+        }
     }
 
     public void Dispose()
