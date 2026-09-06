@@ -5,7 +5,8 @@
       "Bash(Select-Object -First 50)",
       "Bash(dotnet restore *)",
       "Bash(dotnet build *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

@@ -13,8 +13,10 @@ while (true)
     Console.WriteLine("1. 🎤 Live-Noten erkennen");
     Console.WriteLine("2. 🎹 Tonhöhe prüfen (Note → Frequenz)");
     Console.WriteLine("3. 📝 Noten aufzeichnen (mit Recording)");
-    Console.WriteLine("4. 🔊 Verfügbare Eingabegeräte");
-    Console.WriteLine("5. 📊 Info & Hilfe");
+    Console.WriteLine("4. 🔊 Mit Kopfhörer spielen (Loopback)");
+    Console.WriteLine("5. 🎧 Loopback + Recording");
+    Console.WriteLine("6. 📋 Verfügbare Geräte");
+    Console.WriteLine("7. 📊 Info & Hilfe");
     Console.WriteLine("0. ❌ Beenden");
     Console.Write("\nWahl: ");
 
@@ -32,9 +34,15 @@ while (true)
             await RunRecordingSession();
             break;
         case "4":
-            ShowAvailableDevices();
+            await RunLoopback();
             break;
         case "5":
+            await RunLoopbackWithRecording();
+            break;
+        case "6":
+            ShowAvailableDevices();
+            break;
+        case "7":
             ShowInfo();
             break;
         case "0":
@@ -86,6 +94,78 @@ async Task RunRecordingSession()
         using var recorder = new SessionRecorder();
         using var audioCapture = new AudioCapture(deviceIndex, recorder);
         await audioCapture.StartAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Fehler: {ex.Message}");
+    }
+}
+
+async Task RunLoopback()
+{
+    int inputDeviceIndex = AudioDeviceManager.SelectInputDevice();
+
+    if (inputDeviceIndex < 0)
+        return;
+
+    if (!AudioDeviceManager.TestDevice(inputDeviceIndex))
+        return;
+
+    int outputDeviceIndex = AudioDeviceManager.SelectOutputDevice();
+
+    if (outputDeviceIndex < 0)
+        return;
+
+    Console.WriteLine("\n🔄 Loopback-Modus wird gestartet...\n");
+
+    try
+    {
+        using var loopback = new AudioLoopback(inputDeviceIndex, outputDeviceIndex);
+        loopback.Start();
+
+        Console.WriteLine("Drücken Sie 'q' zum Beenden");
+        while (true)
+        {
+            if (Console.KeyAvailable && Console.ReadKey(true).KeyChar == 'q')
+            {
+                loopback.Stop();
+                break;
+            }
+            await Task.Delay(100);
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Fehler: {ex.Message}");
+    }
+}
+
+async Task RunLoopbackWithRecording()
+{
+    int inputDeviceIndex = AudioDeviceManager.SelectInputDevice();
+
+    if (inputDeviceIndex < 0)
+        return;
+
+    if (!AudioDeviceManager.TestDevice(inputDeviceIndex))
+        return;
+
+    int outputDeviceIndex = AudioDeviceManager.SelectOutputDevice();
+
+    if (outputDeviceIndex < 0)
+        return;
+
+    Console.WriteLine("\n🎧 Loopback + Noten-Erkennung wird gestartet...\n");
+
+    try
+    {
+        using var recorder = new SessionRecorder();
+        using var loopback = new AudioLoopback(inputDeviceIndex, outputDeviceIndex);
+        using var audioCapture = new AudioCapture(inputDeviceIndex, recorder);
+
+        loopback.Start();
+        await audioCapture.StartAsync();
+        loopback.Stop();
     }
     catch (Exception ex)
     {

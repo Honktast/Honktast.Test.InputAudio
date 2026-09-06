@@ -44,6 +44,12 @@ public class AudioDeviceManager
         }
     }
 
+    public static int SelectOutputDevice()
+    {
+        Console.WriteLine("\n🔊 Standardausgabegerät wird verwendet (Kopfhörer/Lautsprecher)");
+        return -1;
+    }
+
     public static bool TestDevice(int deviceIndex)
     {
         try
