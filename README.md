@@ -3,7 +3,7 @@
 Eine C# .NET 8.0 Konsolenanwendung, die Mikrofoneingaben analysiert und in Echtzeit als Musiknoten interpretiert.
 
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)]()
 
 ---
@@ -348,8 +348,10 @@ Lösungen:
 
 ## 📄 Lizenz
 
-Dieses Projekt ist unter der **MIT License** lizenziert.
+Dieses Projekt ist **Proprietary** - alle Rechte vorbehalten.
 Siehe [LICENSE](LICENSE) für Details.
+
+⚠️ **Nur zur persönlichen Nutzung durch Paul Heinz Korsig.**
 
 ## 👤 Autor
 
