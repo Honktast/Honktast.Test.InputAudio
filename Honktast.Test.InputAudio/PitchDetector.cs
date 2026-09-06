@@ -69,7 +69,7 @@ public class PitchDetector
 
     private float? DetectPitchYIN(float[] signal)
     {
-        int minPeriod = Math.Max(1, _sampleRate / 500); // Max 500 Hz
+        int minPeriod = Math.Max(1, _sampleRate / 2000); // Max 2000 Hz (G6+)
         int maxPeriod = Math.Min(signal.Length / 2, _sampleRate / 40); // Min 40 Hz
 
         // Schritt 1: Autocorrelation
@@ -142,8 +142,8 @@ public class PitchDetector
         // Konvertiere Lag zu Frequenz
         float frequency = _sampleRate / refinedLag;
 
-        // Gültigkeit prüfen
-        if (frequency < 40 || frequency > 500)
+        // Gültigkeit prüfen (Casio SA-76: C3-G6 = 262-1568 Hz, aber 40-2000 Hz erlaubt)
+        if (frequency < 40 || frequency > 2000)
             return null;
 
         return frequency;
