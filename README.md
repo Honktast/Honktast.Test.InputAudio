@@ -351,12 +351,12 @@ Lösungen:
 Dieses Projekt ist **Proprietary** - alle Rechte vorbehalten.
 Siehe [LICENSE](LICENSE) für Details.
 
-⚠️ **Nur zur persönlichen Nutzung durch Paul Heinz Korsig.**
+⚠️ **Nur zur persönlichen Nutzung durch P.H.K..**
 
 ## 👤 Autor
 
-Paul Heinz Korsig
-- Email: paul-heinz.korsig@alice.de
+P.H.K.
+- Email: contact@phk.dev
 
 ## 📞 Support
 
