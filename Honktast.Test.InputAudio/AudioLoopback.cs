@@ -1,100 +1,62 @@
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
 
 public class AudioLoopback : IDisposable
 {
     private readonly IWaveIn _waveIn;
-    private readonly WasapiOut? _wasapiOut;
-    private readonly WaveOutEvent? _waveOut;
+    private readonly IWavePlayer _wavePlayer;
     private readonly WaveFormat _waveFormat;
-    private BufferedWaveProvider? _waveProvider;
+    private readonly Queue<byte> _ringBuffer;
+    private readonly object _bufferLock = new();
     private bool _isRunning;
-    private bool _useWasapi;
+    private const int RingBufferSize = 4410;
 
     public AudioLoopback(int inputDeviceIndex, int outputDeviceIndex)
     {
         _waveFormat = new WaveFormat(44100, 16, 1);
-        _useWasapi = false;
+        _ringBuffer = new Queue<byte>(RingBufferSize);
 
         _waveIn = new WaveInEvent
         {
             DeviceNumber = inputDeviceIndex,
             WaveFormat = _waveFormat,
-            BufferMilliseconds = 20
+            BufferMilliseconds = 5
         };
 
-        _waveProvider = new BufferedWaveProvider(_waveFormat)
-        {
-            BufferDuration = TimeSpan.FromMilliseconds(200)
-        };
+        _wavePlayer = new WaveOutEvent { DeviceNumber = outputDeviceIndex };
+        var provider = new RingBufferWaveProvider(_waveFormat, _ringBuffer, _bufferLock);
+        _wavePlayer.Init(provider);
 
-        try
-        {
-            _wasapiOut = new WasapiOut(AudioClientShareMode.Exclusive, 20);
-            _wasapiOut.Init(_waveProvider);
-            _useWasapi = true;
-            Console.WriteLine("  (WASAPI Exclusive Mode aktiviert - Minimum Latenz)");
-        }
-        catch
-        {
-            Console.WriteLine("  (WASAPI nicht verfügbar, fallback zu WaveOut)");
-            _wasapiOut?.Dispose();
-            _wasapiOut = null;
-
-            _waveOut = new WaveOutEvent
-            {
-                DeviceNumber = outputDeviceIndex
-            };
-            _waveOut.Init(_waveProvider);
-            _useWasapi = false;
-        }
-
-        _isRunning = false;
         _waveIn.DataAvailable += OnDataAvailable;
+        _isRunning = false;
     }
 
     public void Start()
     {
         _isRunning = true;
-
-        if (_useWasapi)
-            _wasapiOut?.Play();
-        else
-            _waveOut?.Play();
-
+        _wavePlayer.Play();
         _waveIn.StartRecording();
-        Console.WriteLine("🔄 Loopback aktiv - Mikrofon wird auf Kopfhörer durchgeschleift (Low Latency)");
+        Console.WriteLine("🔄 Loopback aktiv - Ultra Low Latency Mode");
     }
 
     public void Stop()
     {
         _isRunning = false;
         _waveIn.StopRecording();
-
-        if (_useWasapi)
-            _wasapiOut?.Stop();
-        else
-            _waveOut?.Stop();
-
+        _wavePlayer.Stop();
         Console.WriteLine("✓ Loopback beendet");
     }
 
     private void OnDataAvailable(object? sender, WaveInEventArgs e)
     {
-        if (!_isRunning || _waveProvider == null) return;
+        if (!_isRunning) return;
 
-        try
+        lock (_bufferLock)
         {
-            _waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
-        }
-        catch (InvalidOperationException)
-        {
-            // Buffer voll - verwerfe älteste Daten statt zu crashen
-            if (_waveProvider.BufferedBytes > 0)
+            for (int i = 0; i < e.BytesRecorded; i++)
             {
-                byte[] temp = new byte[e.BytesRecorded];
-                _waveProvider.Read(temp, 0, Math.Min(temp.Length, _waveProvider.BufferedBytes));
-                _waveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+                if (_ringBuffer.Count >= RingBufferSize)
+                    _ringBuffer.Dequeue();
+                _ringBuffer.Enqueue(e.Buffer[i]);
             }
         }
     }
@@ -103,7 +65,33 @@ public class AudioLoopback : IDisposable
     {
         Stop();
         _waveIn?.Dispose();
-        _wasapiOut?.Dispose();
-        _waveOut?.Dispose();
+        _wavePlayer?.Dispose();
+    }
+}
+
+public class RingBufferWaveProvider : IWaveProvider
+{
+    private readonly Queue<byte> _buffer;
+    private readonly object _bufferLock;
+    public WaveFormat WaveFormat { get; }
+
+    public RingBufferWaveProvider(WaveFormat waveFormat, Queue<byte> buffer, object bufferLock)
+    {
+        WaveFormat = waveFormat;
+        _buffer = buffer;
+        _bufferLock = bufferLock;
+    }
+
+    public int Read(byte[] buffer, int offset, int count)
+    {
+        lock (_bufferLock)
+        {
+            int bytesRead = 0;
+            while (bytesRead < count && _buffer.Count > 0)
+            {
+                buffer[offset + bytesRead++] = _buffer.Dequeue();
+            }
+            return bytesRead;
+        }
     }
 }
