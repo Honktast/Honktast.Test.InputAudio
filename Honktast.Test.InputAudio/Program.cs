@@ -12,8 +12,9 @@ while (true)
     Console.WriteLine("\nWählen Sie einen Modus:");
     Console.WriteLine("1. 🎤 Live-Noten erkennen");
     Console.WriteLine("2. 🎹 Tonhöhe prüfen (Note → Frequenz)");
-    Console.WriteLine("3. 🔊 Verfügbare Eingabegeräte");
-    Console.WriteLine("4. 📊 Info & Hilfe");
+    Console.WriteLine("3. 📝 Noten aufzeichnen (mit Recording)");
+    Console.WriteLine("4. 🔊 Verfügbare Eingabegeräte");
+    Console.WriteLine("5. 📊 Info & Hilfe");
     Console.WriteLine("0. ❌ Beenden");
     Console.Write("\nWahl: ");
 
@@ -28,9 +29,12 @@ while (true)
             TestFrequency();
             break;
         case "3":
-            ShowAvailableDevices();
+            await RunRecordingSession();
             break;
         case "4":
+            ShowAvailableDevices();
+            break;
+        case "5":
             ShowInfo();
             break;
         case "0":
@@ -57,6 +61,30 @@ async Task RunLiveNoteDetection()
     try
     {
         using var audioCapture = new AudioCapture(deviceIndex);
+        await audioCapture.StartAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Fehler: {ex.Message}");
+    }
+}
+
+async Task RunRecordingSession()
+{
+    int deviceIndex = AudioDeviceManager.SelectInputDevice();
+
+    if (deviceIndex < 0)
+        return;
+
+    if (!AudioDeviceManager.TestDevice(deviceIndex))
+        return;
+
+    Console.WriteLine("\n📝 Aufzeichnungssitzung wird gestartet...\n");
+
+    try
+    {
+        using var recorder = new SessionRecorder();
+        using var audioCapture = new AudioCapture(deviceIndex, recorder);
         await audioCapture.StartAsync();
     }
     catch (Exception ex)

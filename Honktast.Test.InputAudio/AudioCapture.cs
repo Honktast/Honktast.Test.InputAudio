@@ -9,8 +9,9 @@ public class AudioCapture : IDisposable
     private readonly Queue<float> _audioBuffer;
     private readonly object _bufferLock = new object();
     private int _sampleCount;
+    private readonly SessionRecorder? _recorder;
 
-    public AudioCapture(int deviceIndex = 0)
+    public AudioCapture(int deviceIndex = 0, SessionRecorder? recorder = null)
     {
         _deviceIndex = deviceIndex;
         _waveIn = new WaveInEvent
@@ -23,6 +24,7 @@ public class AudioCapture : IDisposable
         _isRunning = false;
         _audioBuffer = new Queue<float>();
         _sampleCount = 0;
+        _recorder = recorder;
 
         _waveIn.DataAvailable += OnDataAvailable;
     }
@@ -69,6 +71,7 @@ public class AudioCapture : IDisposable
                         string note = NoteConverter.FrequencyToNote(pitch.Value);
                         float cents = NoteConverter.GetCentsDifference(pitch.Value, note);
                         Console.WriteLine($"{note}\t{pitch:F1} Hz\t{cents:+0.00;-0.00}¢\t{signal}");
+                        _recorder?.RecordNote(note, pitch.Value);
                     }
                     else
                     {
@@ -120,6 +123,7 @@ public class AudioCapture : IDisposable
     public void Stop()
     {
         _waveIn.StopRecording();
+        _recorder?.Close();
         Console.WriteLine("\n✓ Aufnahme beendet");
     }
 
